@@ -10,7 +10,6 @@ const router: IRouter = Router();
 
 const PLAN_PRICES: Record<string, Record<string, number>> = {
   STAR: { monthly: 39900, yearly: 349900 },
-  SCHOOL: { monthly: 199900, yearly: 1999900 },
 };
 
 router.get("/v1/subscription/status", authMiddleware, async (req, res): Promise<void> => {

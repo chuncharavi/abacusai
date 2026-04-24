@@ -73,8 +73,8 @@ export async function authMiddleware(
   }
 }
 
-export function requirePlan(requiredPlan: "STAR" | "SCHOOL") {
-  const planOrder: Record<string, number> = { FREE: 0, STAR: 1, SCHOOL: 2 };
+export function requirePlan(requiredPlan: "STAR") {
+  const planOrder: Record<string, number> = { FREE: 0, STAR: 1 };
   return (req: Request, res: Response, next: NextFunction): void => {
     const userPlan = req.user?.plan ?? "FREE";
     if ((planOrder[userPlan] ?? 0) < (planOrder[requiredPlan] ?? 0)) {

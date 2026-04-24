@@ -46,7 +46,7 @@ export const LoginResponse = zod.object({
     createdAt: zod.string(),
     subscription: zod
       .object({
-        plan: zod.enum(["FREE", "STAR", "SCHOOL"]),
+        plan: zod.enum(["FREE", "STAR"]),
         status: zod.enum(["ACTIVE", "EXPIRED", "CANCELLED"]),
         endDate: zod.string().nullish(),
         startDate: zod.string(),
@@ -68,7 +68,7 @@ export const GetMeResponse = zod.object({
   createdAt: zod.string(),
   subscription: zod
     .object({
-      plan: zod.enum(["FREE", "STAR", "SCHOOL"]),
+      plan: zod.enum(["FREE", "STAR"]),
       status: zod.enum(["ACTIVE", "EXPIRED", "CANCELLED"]),
       endDate: zod.string().nullish(),
       startDate: zod.string(),
@@ -282,7 +282,7 @@ export const ProcessVoiceIntentResponse = zod.object({
  * @summary Get subscription status
  */
 export const GetSubscriptionStatusResponse = zod.object({
-  plan: zod.enum(["FREE", "STAR", "SCHOOL"]),
+  plan: zod.enum(["FREE", "STAR"]),
   status: zod.enum(["ACTIVE", "EXPIRED", "CANCELLED"]),
   endDate: zod.string().nullish(),
   startDate: zod.string(),
@@ -292,7 +292,7 @@ export const GetSubscriptionStatusResponse = zod.object({
  * @summary Create a subscription order
  */
 export const CreateSubscriptionBody = zod.object({
-  plan: zod.enum(["STAR", "SCHOOL"]),
+  plan: zod.enum(["STAR"]),
   billingCycle: zod.enum(["monthly", "yearly"]),
 });
 
@@ -316,7 +316,7 @@ export const SubscriptionWebhookResponse = zod.object({
  * @summary Cancel subscription
  */
 export const CancelSubscriptionResponse = zod.object({
-  plan: zod.enum(["FREE", "STAR", "SCHOOL"]),
+  plan: zod.enum(["FREE", "STAR"]),
   status: zod.enum(["ACTIVE", "EXPIRED", "CANCELLED"]),
   endDate: zod.string().nullish(),
   startDate: zod.string(),
@@ -451,7 +451,6 @@ export const GetAdminStatsResponse = zod.object({
   activeSubscriptions: zod.number(),
   freeUsers: zod.number(),
   starUsers: zod.number(),
-  schoolUsers: zod.number(),
   totalSessions: zod.number(),
   avgDailyActiveSessions: zod.number(),
   monthlyRevenue: zod.number(),
@@ -482,7 +481,7 @@ export const ListUsersResponse = zod.object({
       createdAt: zod.string(),
       subscription: zod
         .object({
-          plan: zod.enum(["FREE", "STAR", "SCHOOL"]),
+          plan: zod.enum(["FREE", "STAR"]),
           status: zod.enum(["ACTIVE", "EXPIRED", "CANCELLED"]),
           endDate: zod.string().nullish(),
           startDate: zod.string(),

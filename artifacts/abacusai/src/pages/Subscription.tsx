@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useCreateSubscription, CreateSubscriptionBodyPlan, CreateSubscriptionBodyBillingCycle, useGetSubscriptionStatus } from '@workspace/api-client-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Star, Building2, Zap } from 'lucide-react';
+import { CheckCircle2, Star, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Subscription() {
@@ -72,7 +72,7 @@ export default function Subscription() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8 items-stretch">
+      <div className="grid md:grid-cols-2 gap-8 items-stretch max-w-3xl mx-auto w-full">
         {/* FREE */}
         <Card className="flex flex-col border-border/50 shadow-sm relative overflow-hidden">
           {currentSub.plan === 'FREE' && (
@@ -139,52 +139,13 @@ export default function Subscription() {
             <Button 
               className="w-full font-bold h-12 shadow-lg" 
               onClick={() => handleUpgrade('STAR')}
-              disabled={createSubMut.isPending || currentSub.plan === 'STAR' || currentSub.plan === 'SCHOOL'}
+              disabled={createSubMut.isPending || currentSub.plan === 'STAR'}
             >
               {currentSub.plan === 'STAR' ? 'Active' : 'Upgrade to Star'}
             </Button>
           </CardFooter>
         </Card>
 
-        {/* SCHOOL */}
-        <Card className="flex flex-col border-border/50 shadow-sm relative overflow-hidden">
-          {currentSub.plan === 'SCHOOL' && (
-            <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-xl">
-              ACTIVE
-            </div>
-          )}
-          <CardHeader className="text-center pb-2">
-            <div className="flex justify-center mb-2">
-              <Building2 className="w-8 h-8 text-accent" />
-            </div>
-            <CardTitle className="text-2xl font-bold text-accent">School / Class</CardTitle>
-            <div className="mt-4 flex justify-center items-baseline text-4xl font-bold">
-              ${billingCycle === 'monthly' ? '49' : '39'}
-              <span className="text-sm text-muted-foreground ml-1 font-normal">/mo</span>
-            </div>
-            {billingCycle === 'yearly' && <p className="text-sm text-green-500 font-medium mt-1">Billed $468 yearly</p>}
-          </CardHeader>
-          <CardContent className="flex-1 mt-6">
-            <ul className="space-y-3">
-              {['Everything in Star Plan', 'Up to 30 student accounts', 'Teacher dashboard', 'Class-wide analytics', 'Custom assignments'].map((feature, i) => (
-                <li key={i} className="flex items-center gap-3 text-sm">
-                  <CheckCircle2 className="w-5 h-5 text-accent" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-          <CardFooter>
-            <Button 
-              className="w-full font-bold h-12" 
-              variant={currentSub.plan === 'SCHOOL' ? "outline" : "default"}
-              onClick={() => handleUpgrade('SCHOOL')}
-              disabled={createSubMut.isPending || currentSub.plan === 'SCHOOL'}
-            >
-              {currentSub.plan === 'SCHOOL' ? 'Active' : 'Get School Plan'}
-            </Button>
-          </CardFooter>
-        </Card>
       </div>
       
       <div className="text-center text-sm text-muted-foreground mt-8">

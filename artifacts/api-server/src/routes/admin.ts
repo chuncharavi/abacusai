@@ -16,9 +16,8 @@ router.get("/v1/admin/stats", authMiddleware, async (req, res): Promise<void> =>
   const activeSubscriptions = subscriptions.filter((s) => s.status === "ACTIVE" && s.plan !== "FREE").length;
   const freeUsers = subscriptions.filter((s) => s.plan === "FREE").length;
   const starUsers = subscriptions.filter((s) => s.plan === "STAR" && s.status === "ACTIVE").length;
-  const schoolUsers = subscriptions.filter((s) => s.plan === "SCHOOL" && s.status === "ACTIVE").length;
 
-  const monthlyRevenue = starUsers * 399 + schoolUsers * 1999;
+  const monthlyRevenue = starUsers * 399;
   const totalRevenue = monthlyRevenue;
 
   const totalSessions = sessionCount?.count ?? 0;
@@ -30,7 +29,6 @@ router.get("/v1/admin/stats", authMiddleware, async (req, res): Promise<void> =>
     activeSubscriptions,
     freeUsers,
     starUsers,
-    schoolUsers,
     totalSessions,
     avgDailyActiveSessions: Math.round(avgDailyActiveSessions * 100) / 100,
     monthlyRevenue,
@@ -92,9 +90,8 @@ router.get("/v1/admin/users", authMiddleware, async (req, res): Promise<void> =>
 router.get("/v1/admin/revenue", authMiddleware, async (req, res): Promise<void> => {
   const subscriptions = await db.select().from(subscriptionsTable);
   const starUsers = subscriptions.filter((s) => s.plan === "STAR" && s.status === "ACTIVE").length;
-  const schoolUsers = subscriptions.filter((s) => s.plan === "SCHOOL" && s.status === "ACTIVE").length;
 
-  const mrr = starUsers * 399 + schoolUsers * 1999;
+  const mrr = starUsers * 399;
 
   const months = [];
   for (let i = 5; i >= 0; i--) {

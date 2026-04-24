@@ -22,7 +22,7 @@ export default function Leaderboard() {
           </div>
           <h2 className="text-2xl font-heading font-bold mb-4">Premium Feature</h2>
           <p className="text-muted-foreground mb-8">
-            The weekly leaderboard is available exclusively for Star and School plan members. Upgrade to compete with students worldwide!
+            The weekly leaderboard is available exclusively for Star plan members. Upgrade to compete with students worldwide!
           </p>
           <Link href="/subscription">
             <Button className="w-full font-bold h-12 shadow-lg">Unlock Leaderboard</Button>

@@ -62,7 +62,6 @@ export type SubscriptionStatusPlan =
 export const SubscriptionStatusPlan = {
   FREE: "FREE",
   STAR: "STAR",
-  SCHOOL: "SCHOOL",
 } as const;
 
 export type SubscriptionStatusStatus =
@@ -280,7 +279,6 @@ export type CreateSubscriptionBodyPlan =
 
 export const CreateSubscriptionBodyPlan = {
   STAR: "STAR",
-  SCHOOL: "SCHOOL",
 } as const;
 
 export type CreateSubscriptionBodyBillingCycle =
@@ -353,7 +351,6 @@ export interface AdminStats {
   activeSubscriptions: number;
   freeUsers: number;
   starUsers: number;
-  schoolUsers: number;
   totalSessions: number;
   avgDailyActiveSessions: number;
   monthlyRevenue: number;

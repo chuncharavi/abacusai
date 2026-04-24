@@ -1,7 +1,7 @@
 import { useGetAdminStats, useGetRevenueStats, useListUsers } from '@workspace/api-client-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
-import { Users, DollarSign, Crown, Building, Activity } from 'lucide-react';
+import { Users, DollarSign, Crown, Activity } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default function AdminDashboard() {
@@ -16,7 +16,6 @@ export default function AdminDashboard() {
   const subscriptionData = [
     { name: 'Free', value: stats.freeUsers, color: 'hsl(var(--muted-foreground))' },
     { name: 'Star', value: stats.starUsers, color: 'hsl(var(--primary))' },
-    { name: 'School', value: stats.schoolUsers, color: 'hsl(var(--secondary))' },
   ];
 
   return (

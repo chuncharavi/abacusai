@@ -98,7 +98,7 @@ const TESTIMONIALS = [
     name: "Rajan Nair",
     role: "Mathematics Teacher, Delhi",
     avatar: "RN",
-    quote: "I use the School plan for my entire coaching batch. The teacher dashboard saves me hours every week and the students are genuinely excited to practise.",
+    quote: "I use the Star plan for my entire coaching batch. The teacher dashboard saves me hours every week and the students are genuinely excited to practise.",
   },
   {
     name: "Aisha Khan",
@@ -190,7 +190,7 @@ export default function Landing() {
               </div>
               <div>
                 <div className="text-2xl font-heading font-bold text-foreground">500+</div>
-                <div className="text-sm text-muted-foreground">Schools onboard</div>
+                <div className="text-sm text-muted-foreground">Teachers onboard</div>
               </div>
             </div>
           </motion.div>
@@ -394,7 +394,7 @@ export default function Landing() {
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-sm">
                 <Star className="w-4 h-4" />
-                <span>Loved by families & schools</span>
+                <span>Loved by families & teachers</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground">
                 What our learners say
