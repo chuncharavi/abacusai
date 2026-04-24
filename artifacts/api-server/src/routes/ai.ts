@@ -16,11 +16,12 @@ import {
 const router: IRouter = Router();
 
 function getAnthropicClient() {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    throw new Error("ANTHROPIC_API_KEY not set");
+  const apiKey = process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY;
+  const baseURL = process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL;
+  if (!apiKey || !baseURL) {
+    throw new Error("Anthropic AI integration not configured");
   }
-  return new Anthropic({ apiKey });
+  return new Anthropic({ apiKey, baseURL });
 }
 
 router.post("/v1/ai/hint", authMiddleware, async (req, res): Promise<void> => {
@@ -35,7 +36,7 @@ router.post("/v1/ai/hint", authMiddleware, async (req, res): Promise<void> => {
   try {
     const client = getAnthropicClient();
     const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-6",
       max_tokens: 256,
       messages: [
         {
@@ -73,7 +74,7 @@ router.post("/v1/ai/generate-problems", authMiddleware, requirePlan("STAR"), asy
   try {
     const client = getAnthropicClient();
     const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-6",
       max_tokens: 1024,
       messages: [
         {
@@ -108,7 +109,7 @@ router.post("/v1/ai/adapt", authMiddleware, async (req, res): Promise<void> => {
   try {
     const client = getAnthropicClient();
     const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-6",
       max_tokens: 256,
       messages: [
         {
@@ -191,7 +192,7 @@ router.post("/v1/ai/weekly-report", authMiddleware, requirePlan("STAR"), async (
   try {
     const client = getAnthropicClient();
     const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-6",
       max_tokens: 512,
       messages: [
         {
@@ -248,7 +249,7 @@ router.post("/v1/ai/voice-intent", authMiddleware, requirePlan("STAR"), async (r
   try {
     const client = getAnthropicClient();
     const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-6",
       max_tokens: 256,
       messages: [
         {
