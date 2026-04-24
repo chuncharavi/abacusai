@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Brain } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const loginMutation = useLogin();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,11 +22,17 @@ export default function Login() {
     loginMutation.mutate({ data: { email, password } }, {
       onSuccess: (data) => {
         login(data.token);
+        // Redirect based on user role
+        const role = data.user?.role;
+        if (role === 'PARENT') setLocation('/parent');
+        else if (role === 'TEACHER') setLocation('/teacher');
+        else if (role === 'ADMIN') setLocation('/admin');
+        else setLocation('/dashboard');
       },
       onError: (error) => {
         toast({
           title: "Login Failed",
-          description: error.error || "An error occurred",
+          description: (error.data as any)?.message || error.message || "An error occurred",
           variant: "destructive"
         });
       }

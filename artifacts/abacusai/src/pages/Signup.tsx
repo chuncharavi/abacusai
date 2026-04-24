@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { Brain } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -19,6 +19,7 @@ export default function Signup() {
   
   const { login } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const registerMutation = useRegister();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,11 +35,15 @@ export default function Signup() {
     }, {
       onSuccess: (data) => {
         login(data.token);
+        // Redirect based on role
+        if (role === 'PARENT') setLocation('/parent');
+        else if (role === 'TEACHER') setLocation('/teacher');
+        else setLocation('/dashboard');
       },
       onError: (error) => {
         toast({
           title: "Registration Failed",
-          description: error.error || "An error occurred",
+          description: (error.data as any)?.message || error.message || "An error occurred",
           variant: "destructive"
         });
       }

@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useGetMe } from "@workspace/api-client-react";
+import { useGetMe, setAuthTokenGetter } from "@workspace/api-client-react";
 import type { UserProfile } from "@workspace/api-client-react";
 import { useLocation } from "wouter";
+
+// Configure global auth token getter so all API calls include the JWT
+setAuthTokenGetter(() => localStorage.getItem("abacusai_token"));
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -33,11 +36,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [token]);
 
   const login = (newToken: string) => {
+    // Write to localStorage immediately so the token getter has it before refetch fires
+    localStorage.setItem("abacusai_token", newToken);
     setToken(newToken);
-    setTimeout(() => refetch(), 0);
+    setTimeout(() => refetch(), 50);
   };
 
   const logout = () => {
+    localStorage.removeItem("abacusai_token");
     setToken(null);
     setLocation("/login");
   };
