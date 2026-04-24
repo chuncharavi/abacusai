@@ -16,12 +16,18 @@ import {
 const router: IRouter = Router();
 
 function getAnthropicClient() {
-  const apiKey = process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY;
-  const baseURL = process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL;
-  if (!apiKey || !baseURL) {
-    throw new Error("Anthropic AI integration not configured");
+  // Replit managed integration (development / Replit hosting)
+  const managedKey = process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY;
+  const managedBaseURL = process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL;
+  if (managedKey && managedBaseURL) {
+    return new Anthropic({ apiKey: managedKey, baseURL: managedBaseURL });
   }
-  return new Anthropic({ apiKey, baseURL });
+  // Standard Anthropic API key (DigitalOcean / self-hosted)
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (apiKey) {
+    return new Anthropic({ apiKey });
+  }
+  throw new Error("No Anthropic API key configured. Set ANTHROPIC_API_KEY in your .env file.");
 }
 
 router.post("/v1/ai/hint", authMiddleware, async (req, res): Promise<void> => {

@@ -1,0 +1,29 @@
+FROM node:24-alpine AS base
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+
+FROM base AS deps
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY lib/ ./lib/
+COPY artifacts/abacusai/package.json ./artifacts/abacusai/
+RUN pnpm install --frozen-lockfile
+
+FROM deps AS builder
+COPY tsconfig.base.json tsconfig.json ./
+COPY lib/ ./lib/
+COPY artifacts/abacusai/ ./artifacts/abacusai/
+COPY attached_assets/ ./attached_assets/
+
+ARG BASE_PATH=/
+ENV BASE_PATH=${BASE_PATH}
+ENV PORT=3000
+ENV NODE_ENV=production
+
+RUN pnpm --filter @workspace/api-client-react run build 2>/dev/null || true
+RUN pnpm --filter @workspace/abacusai run build
+
+FROM nginx:alpine AS runner
+COPY --from=builder /app/artifacts/abacusai/dist/public /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
