@@ -1,5 +1,6 @@
 import { Router } from "express";
 import type { IRouter } from "express";
+import Anthropic from "@anthropic-ai/sdk";
 import { db, usersTable, studentsTable, sessionsTable, subscriptionsTable } from "@workspace/db";
 import { eq, desc, sql, and, gte } from "drizzle-orm";
 import { authMiddleware } from "../middlewares/auth";
@@ -8,6 +9,40 @@ import {
   CompleteSessionBody,
   ListSessionsQueryParams,
 } from "@workspace/api-zod";
+import { logger } from "../lib/logger";
+
+function getAnthropicClient() {
+  const apiKey = process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY;
+  const baseURL = process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL;
+  if (!apiKey || !baseURL) return null;
+  return new Anthropic({ apiKey, baseURL });
+}
+
+async function generateProblemsWithAI(level: number, count: number, studentAge: number, recentAccuracy: number): Promise<ReturnType<typeof generateProblems>> {
+  const client = getAnthropicClient();
+  if (!client) return generateProblems(level, count);
+
+  try {
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1024,
+      messages: [{
+        role: "user",
+        content: `Generate exactly ${count} abacus math problems for a Level ${level} student aged ${studentAge}. Their recent accuracy is ${recentAccuracy}%. Level guide: L1=single digits (show number on abacus), L2=single-digit addition, L3=double-digit addition/subtraction, L4=multi-digit addition/subtraction, L5=multiplication/division. Make problems appropriate to the abacus bead method. Return ONLY a JSON array, no markdown: [{"question":"...","answer":0,"hint":"which beads to move","difficulty":"easy|medium|hard"}]`,
+      }],
+    });
+
+    const text = message.content[0].type === "text" ? message.content[0].text : "[]";
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (err) {
+    logger.warn({ err }, "AI problem generation failed, using static fallback");
+  }
+  return generateProblems(level, count);
+}
 
 const router: IRouter = Router();
 
@@ -248,7 +283,16 @@ router.post("/v1/student/session/start", authMiddleware, async (req, res): Promi
     return;
   }
 
-  const problems = generateProblems(level, 10);
+  // For STAR plan: use AI-generated problems personalized to student's performance
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.user!.id)).limit(1);
+  const recentSessions = await db.select().from(sessionsTable).where(eq(sessionsTable.studentId, student.id)).orderBy(desc(sessionsTable.createdAt)).limit(5);
+  const recentAccuracy = recentSessions.length > 0
+    ? recentSessions.reduce((sum, s) => sum + s.accuracy, 0) / recentSessions.length
+    : 50;
+
+  const problems = plan === "STAR"
+    ? await generateProblemsWithAI(level, 10, user?.age ?? 10, Math.round(recentAccuracy))
+    : generateProblems(level, 10);
 
   const [session] = await db
     .insert(sessionsTable)
@@ -353,13 +397,30 @@ router.post("/v1/student/session/complete", authMiddleware, async (req, res): Pr
 
   const updatedBadges = [...existingBadges, ...newBadges];
 
+  // Level-up: advance if accuracy >= 80% and not already at max level
+  const MAX_LEVEL = 5;
+  let newLevel: number | null = null;
+  const sessionsAtCurrentLevel = allSessions.filter(s => s.level === student.level).length;
+  if (
+    accuracy >= 80 &&
+    student.level < MAX_LEVEL &&
+    sessionsAtCurrentLevel >= 3
+  ) {
+    newLevel = student.level + 1;
+    if (!existingBadges.includes(`Level ${newLevel} Unlocked`)) {
+      newBadges.push(`Level ${newLevel} Unlocked`);
+    }
+    xpEarned += 50;
+  }
+
   await db
     .update(studentsTable)
     .set({
       xp: student.xp + xpEarned,
       streak: newStreak,
       lastActive: now,
-      badges: updatedBadges,
+      badges: [...updatedBadges, ...newBadges.filter(b => !updatedBadges.includes(b))],
+      ...(newLevel ? { level: newLevel } : {}),
     })
     .where(eq(studentsTable.id, student.id));
 
@@ -368,7 +429,7 @@ router.post("/v1/student/session/complete", authMiddleware, async (req, res): Pr
     accuracy: Math.round(accuracy * 100) / 100,
     xpEarned,
     badges: newBadges,
-    newLevel: null,
+    newLevel,
     streakUpdated: newStreak !== student.streak,
   });
 });

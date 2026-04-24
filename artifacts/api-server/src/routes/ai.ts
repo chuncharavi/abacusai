@@ -41,7 +41,7 @@ router.post("/v1/ai/hint", authMiddleware, async (req, res): Promise<void> => {
       messages: [
         {
           role: "user",
-          content: `You are a friendly, encouraging abacus tutor for a ${studentAge}-year-old student at Level ${level}. They got this problem wrong twice: "${problem}". Their wrong answers were: ${wrongAnswers.join(", ")}. Explain the correct method in simple, age-appropriate language in under 80 words. Be warm and encouraging. Return only JSON: {"hint":"...","encouragement":"..."}`,
+          content: `You are a friendly abacus tutor for a ${studentAge}-year-old at Level ${level}. Problem: "${problem}". Wrong answers given: ${wrongAnswers.length > 0 ? wrongAnswers.join(", ") : "none yet"}.\n\nExplain the ABACUS BEAD METHOD: which column to use, whether to move heaven bead (worth 5) or earth beads (worth 1 each), and how many beads to slide up or down. Use simple words. Under 80 words. Warm and encouraging.\n\nReturn ONLY JSON: {"hint":"...","encouragement":"..."}`,
         },
       ],
     });
