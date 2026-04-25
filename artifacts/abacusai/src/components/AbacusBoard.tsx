@@ -88,6 +88,7 @@ export function AbacusBoard({
       return () => clearTimeout(timer);
     } else {
       setIsVisible(true);
+      return;
     }
   }, [value, mode]);
 

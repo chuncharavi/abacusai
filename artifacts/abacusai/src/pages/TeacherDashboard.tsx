@@ -1,7 +1,7 @@
 import { useGetClassStats, useGetClassStudents } from '@workspace/api-client-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { Users, GraduationCap, Trophy, BarChart3 } from 'lucide-react';
+import { Users, GraduationCap, Trophy, BarChart3, Flame } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default function TeacherDashboard() {

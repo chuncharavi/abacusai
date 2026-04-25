@@ -46,7 +46,7 @@ export default function Learn() {
         setWrongAnswers([]);
       },
       onError: (err) => {
-        if (err.error && err.error.includes("upgrade")) {
+        if (err.message && err.message.toLowerCase().includes("upgrade")) {
            setLocation('/upgrade');
         }
       }
