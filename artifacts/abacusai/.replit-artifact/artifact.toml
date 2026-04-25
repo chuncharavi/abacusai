@@ -20,7 +20,11 @@ run = "pnpm --filter @workspace/abacusai run dev"
 [services.env]
 PORT = "25767"
 BASE_PATH = "/"
+NODE_ENV = "production"
 
 [services.production]
-build = ["pnpm", "--filter", "@workspace/abacusai", "run", "build"]
-run = ["pnpm", "--filter", "@workspace/abacusai", "run", "serve"]
+build = ["sh", "-c", "pnpm --filter @workspace/abacusai run build && pnpm --filter @workspace/api-server run build"]
+run = ["node", "--enable-source-maps", "artifacts/api-server/dist/index.mjs"]
+
+[services.production.health.startup]
+path = "/api/healthz"
