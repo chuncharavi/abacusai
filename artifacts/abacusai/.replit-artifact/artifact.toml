@@ -23,7 +23,7 @@ BASE_PATH = "/"
 
 [services.production]
 build = ["pnpm", "--filter", "@workspace/abacusai", "run", "build"]
-run = ["sh", "-c", "PORT=25767 pnpm --filter @workspace/abacusai run serve"]
+run = ["sh", "-c", "PORT=8080 pnpm --filter @workspace/abacusai run serve"]
 
 [services.production.health.startup]
 path = "/"
