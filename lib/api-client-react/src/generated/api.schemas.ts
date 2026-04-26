@@ -62,6 +62,7 @@ export type SubscriptionStatusPlan =
 export const SubscriptionStatusPlan = {
   FREE: "FREE",
   STAR: "STAR",
+  SCHOOL: "SCHOOL",
 } as const;
 
 export type SubscriptionStatusStatus =
@@ -279,6 +280,7 @@ export type CreateSubscriptionBodyPlan =
 
 export const CreateSubscriptionBodyPlan = {
   STAR: "STAR",
+  SCHOOL: "SCHOOL",
 } as const;
 
 export type CreateSubscriptionBodyBillingCycle =
@@ -299,6 +301,34 @@ export interface CreateSubscriptionResponse {
   amount: number;
   currency: string;
   keyId: string;
+}
+
+export type VerifyPaymentBodyPlan =
+  (typeof VerifyPaymentBodyPlan)[keyof typeof VerifyPaymentBodyPlan];
+
+export const VerifyPaymentBodyPlan = {
+  STAR: "STAR",
+} as const;
+
+export type VerifyPaymentBodyBillingCycle =
+  (typeof VerifyPaymentBodyBillingCycle)[keyof typeof VerifyPaymentBodyBillingCycle];
+
+export const VerifyPaymentBodyBillingCycle = {
+  monthly: "monthly",
+  yearly: "yearly",
+} as const;
+
+export interface VerifyPaymentBody {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+  plan: VerifyPaymentBodyPlan;
+  billingCycle: VerifyPaymentBodyBillingCycle;
+}
+
+export interface VerifyPaymentResponse {
+  success: boolean;
+  plan: string;
 }
 
 export interface ChildProfile {
@@ -351,6 +381,7 @@ export interface AdminStats {
   activeSubscriptions: number;
   freeUsers: number;
   starUsers: number;
+  schoolUsers: number;
   totalSessions: number;
   avgDailyActiveSessions: number;
   monthlyRevenue: number;

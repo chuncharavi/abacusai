@@ -52,6 +52,8 @@ import type {
   SuccessResponse,
   UpgradeResponse,
   UserProfile,
+  VerifyPaymentBody,
+  VerifyPaymentResponse,
   VoiceIntentBody,
   VoiceIntentResponse,
   WeeklyReportBody,
@@ -1469,6 +1471,92 @@ export const useSubscriptionWebhook = <
   TContext
 > => {
   return useMutation(getSubscriptionWebhookMutationOptions(options));
+};
+
+/**
+ * @summary Verify Razorpay payment and activate subscription
+ */
+export const getVerifyPaymentUrl = () => {
+  return `/api/v1/subscription/verify`;
+};
+
+export const verifyPayment = async (
+  verifyPaymentBody: VerifyPaymentBody,
+  options?: RequestInit,
+): Promise<VerifyPaymentResponse> => {
+  return customFetch<VerifyPaymentResponse>(getVerifyPaymentUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(verifyPaymentBody),
+  });
+};
+
+export const getVerifyPaymentMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyPayment>>,
+    TError,
+    { data: BodyType<VerifyPaymentBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof verifyPayment>>,
+  TError,
+  { data: BodyType<VerifyPaymentBody> },
+  TContext
+> => {
+  const mutationKey = ["verifyPayment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof verifyPayment>>,
+    { data: BodyType<VerifyPaymentBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return verifyPayment(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type VerifyPaymentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof verifyPayment>>
+>;
+export type VerifyPaymentMutationBody = BodyType<VerifyPaymentBody>;
+export type VerifyPaymentMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Verify Razorpay payment and activate subscription
+ */
+export const useVerifyPayment = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof verifyPayment>>,
+    TError,
+    { data: BodyType<VerifyPaymentBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof verifyPayment>>,
+  TError,
+  { data: BodyType<VerifyPaymentBody> },
+  TContext
+> => {
+  return useMutation(getVerifyPaymentMutationOptions(options));
 };
 
 /**

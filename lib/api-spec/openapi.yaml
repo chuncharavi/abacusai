@@ -367,6 +367,25 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
+  /v1/subscription/verify:
+    post:
+      operationId: verifyPayment
+      tags: [subscription]
+      summary: Verify Razorpay payment and activate subscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyPaymentBody"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyPaymentResponse"
+
   /v1/subscription/cancel:
     post:
       operationId: cancelSubscription
@@ -1095,6 +1114,39 @@ components:
         - amount
         - currency
         - keyId
+
+    VerifyPaymentBody:
+      type: object
+      properties:
+        razorpay_payment_id:
+          type: string
+        razorpay_order_id:
+          type: string
+        razorpay_signature:
+          type: string
+        plan:
+          type: string
+          enum: [STAR]
+        billingCycle:
+          type: string
+          enum: [monthly, yearly]
+      required:
+        - razorpay_payment_id
+        - razorpay_order_id
+        - razorpay_signature
+        - plan
+        - billingCycle
+
+    VerifyPaymentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        plan:
+          type: string
+      required:
+        - success
+        - plan
 
     ChildProfile:
       type: object
