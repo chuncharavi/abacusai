@@ -1,0 +1,16 @@
+name: abacusai
+region: nyc
+
+services:
+- name: web
+  build_command: corepack enable && pnpm install --frozen-lockfile && pnpm run build
+  run_command: node --enable-source-maps artifacts/api-server/dist/index.mjs
+  http_port: 8080
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  envs:
+  - key: NODE_ENV
+    value: production
+  - key: DATABASE_URL
+    scope: RUN_TIME
+    type: SECRET
